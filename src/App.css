@@ -1,0 +1,266 @@
+.app-shell {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  background: #0b0e13;
+  color: #e6ebf2;
+  overflow: hidden;
+}
+
+.app-shell.center {
+  place-items: center;
+  display: grid;
+}
+
+.loading,
+.error {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 14px;
+  color: #9aa7b8;
+}
+
+.error {
+  color: #ff6b6b;
+}
+
+.top-bar {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #1a2230;
+  background: rgba(11, 14, 19, 0.92);
+  backdrop-filter: blur(8px);
+  z-index: 2;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.brand-mark {
+  color: #4a7cff;
+  font-size: 1.25rem;
+}
+
+.brand-title {
+  font-weight: 650;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+}
+
+.brand-sub {
+  font-size: 0.72rem;
+  color: #7d8b9c;
+}
+
+.legend {
+  display: flex;
+  gap: 0.9rem;
+  margin-left: auto;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  text-transform: lowercase;
+  color: #b7c2d0;
+}
+
+.swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.var-hint {
+  color: #6d7c90;
+}
+
+.main-stage {
+  position: relative;
+  min-height: 0;
+}
+
+.panel {
+  background: rgba(14, 18, 26, 0.88);
+  border: 1px solid #1e2838;
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+}
+
+.info-panel {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 240px;
+  padding: 0.85rem 1rem;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.info-panel.muted {
+  color: #6d7c90;
+  font-size: 0.85rem;
+}
+
+.panel-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin-bottom: 0.65rem;
+  letter-spacing: 0.04em;
+}
+
+.kv {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+}
+
+.kv > div {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 0.4rem;
+  align-items: baseline;
+}
+
+.kv dt {
+  margin: 0;
+  color: #6d7c90;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.kv dd {
+  margin: 0;
+  font-size: 0.88rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.chip {
+  display: inline-block;
+  padding: 0.1rem 0.45rem;
+  border: 1px solid;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  text-transform: lowercase;
+}
+
+.pos {
+  color: #3ecf8e;
+}
+
+.neg {
+  color: #ff6b6b;
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.small {
+  font-size: 0.72rem;
+}
+
+.timeline-panel {
+  margin: 0.75rem 1rem 1rem;
+  padding: 0.75rem 1rem 0.9rem;
+  z-index: 2;
+}
+
+.timeline-top {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  appearance: none;
+  border: 1px solid #2a3650;
+  background: #151c28;
+  color: #e6ebf2;
+  border-radius: 7px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.btn:hover {
+  background: #1c2638;
+  border-color: #3a4d72;
+}
+
+.btn.ghost {
+  background: transparent;
+  padding: 0.3rem 0.55rem;
+  color: #8a98ab;
+}
+
+.btn.ghost.active {
+  color: #fff;
+  border-color: #4a7cff;
+  background: rgba(74, 124, 255, 0.15);
+}
+
+.speed-group {
+  display: inline-flex;
+  gap: 0.25rem;
+}
+
+.ts-display {
+  margin-left: auto;
+  font-size: 0.85rem;
+  color: #c5d0de;
+}
+
+.scrubber-wrap {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.scrubber {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  outline: none;
+  cursor: pointer;
+}
+
+.scrubber::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #4a7cff;
+  border: 2px solid #0b0e13;
+  box-shadow: 0 0 0 1px #4a7cff;
+  cursor: pointer;
+}
+
+.scrubber::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #4a7cff;
+  border: 2px solid #0b0e13;
+  cursor: pointer;
+}
+
+.scrubber-ends {
+  display: flex;
+  justify-content: space-between;
+  color: #5d6b7e;
+}
