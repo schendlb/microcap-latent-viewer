@@ -190,10 +190,10 @@ export function venueColor(venue: string): string {
 
 /** Map volume_h24 to a sphere radius in scene units. */
 export function radiusFromVolume(volume: number | null | undefined, globalMax: number): number {
-  const base = 0.18
+  const base = 0.35 // Increased from 0.18 for better visibility
   if (volume == null || !Number.isFinite(volume) || globalMax <= 0) return base
   const norm = Math.sqrt(Math.max(volume, 0) / globalMax) // sqrt dampens outliers
-  return base + norm * 0.45
+  return base + norm * 0.65 // Increased from 0.45
 }
 
 export function maxVolume(processed: ProcessedTimeline): number {

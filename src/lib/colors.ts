@@ -20,23 +20,23 @@ export function getTemporalColor(
   let baseColor: Color
   
   if (clampedPos < 0) {
-    // Past: cool spectrum (deep blue → cyan)
+    // Past: cool spectrum (deep blue → cyan) - darker and more saturated
     const t = (clampedPos + 1) // 0 (oldest) → 1 (near present)
-    const startColor = new Color('#1a2540') // Deep blue
-    const endColor = new Color('#4a9eff')   // Bright cyan
-    baseColor = new Color().lerpColors(startColor, endColor, t)
+    const startColor = new Color('#0a1428') // Very deep blue (darker)
+    const endColor = new Color('#2a6bcc')   // Medium blue (less bright than present)
+    baseColor = new Color().lerpColors(startColor, endColor, Math.pow(t, 0.8))
   } else {
-    // Present to Future: cyan → yellow/orange
+    // Present to Future: bright cyan → warm orange
     const t = clampedPos // 0 (present) → 1 (future)
-    const startColor = new Color('#4af4ff') // Bright cyan (present)
-    const endColor = new Color('#ffaa33')   // Warm orange (future)
+    const startColor = new Color('#00e5ff') // Very bright cyan (present)
+    const endColor = new Color('#ff8833')   // Bright warm orange (future)
     baseColor = new Color().lerpColors(startColor, endColor, t)
   }
   
-  // Optional: blend with venue color for secondary cue
+  // Optional: blend with venue color for secondary cue (less influence)
   if (venueHint) {
     const venueColor = new Color(venueHint)
-    baseColor.lerp(venueColor, 0.15) // Subtle venue tint
+    baseColor.lerp(venueColor, 0.1) // Reduced from 0.15 to 0.1
   }
   
   return `#${baseColor.getHexString()}`
@@ -50,7 +50,7 @@ export function getGhostOpacity(
   stepIndex: number,
   totalSteps: number,
 ): number {
-  // Fade from 0.15 (oldest) to 0.6 (newest/closest to present)
+  // Fade from 0.2 (oldest) to 0.55 (newest/closest to present) - dimmer than present
   const t = stepIndex / Math.max(totalSteps - 1, 1)
-  return 0.15 + t * 0.45
+  return 0.2 + t * 0.35
 }

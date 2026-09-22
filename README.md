@@ -24,8 +24,10 @@ Colors encode time:
 
 Venue colors (Base green, Robinhood orange) are blended in subtly as a secondary cue.
 
-### Soft SDF-Style Volumes
-Instead of hard spheres, tickers are rendered as **soft volumetric blobs** with smooth density falloff, Fresnel glow, and transparency—giving a "probability cloud" aesthetic suitable for the probabilistic nature of the PCA embedding.
+### Soft Glowing Volumes
+Instead of hard spheres, tickers are rendered as **soft glowing blobs** using high-quality sphere geometry with emissive materials, transparency, and smooth shading. This gives a "probability cloud" aesthetic with soft edges and volumetric glow, suitable for the probabilistic nature of the PCA embedding.
+
+**Note**: An initial custom SDF shader implementation was replaced with enhanced standard materials to ensure reliable pointer interaction and performance while maintaining the soft, glowing volumetric appearance.
 
 ## Data
 

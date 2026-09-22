@@ -59,7 +59,7 @@ export function TickerMarker({
     <>
       {/* Ghost trail: render past states with fading opacity */}
       {ghostStates.map((ghost, idx) => {
-        const ghostRadius = radiusFromVolume(ghost.volume_h24, volumeMax) * 0.85
+        const ghostRadius = radiusFromVolume(ghost.volume_h24, volumeMax) * 0.9
         const opacity = getGhostOpacity(idx, ghostStates.length)
         // Temporal position for ghosts: -1 (oldest) to near 0 (newest)
         const temporalPos = -1 + (idx / Math.max(ghostStates.length - 1, 1))
@@ -72,7 +72,7 @@ export function TickerMarker({
             radius={ghostRadius}
             color={ghostColor}
             opacity={opacity}
-            emissiveIntensity={0.2}
+            emissiveIntensity={0.25}
             scale={1}
           />
         )
@@ -84,8 +84,8 @@ export function TickerMarker({
           position={[0, 0, 0]}
           radius={radius}
           color={presentColor}
-          opacity={active ? 0.95 : 0.85}
-          emissiveIntensity={active ? 0.6 : 0.35}
+          opacity={1.0}
+          emissiveIntensity={active ? 1.0 : 0.6}
           scale={scale}
           onPointerOver={handlePointerOver}
           onPointerOut={handlePointerOut}
@@ -122,10 +122,10 @@ export function TickerMarker({
       {futureProjection && (
         <SoftBlob
           position={futureProjection.position}
-          radius={radius * 0.75}
+          radius={radius * 0.85}
           color={getTemporalColor(0.7, venueHint)} // Future color
-          opacity={0.5 * futureProjection.confidence}
-          emissiveIntensity={0.4}
+          opacity={0.65 * futureProjection.confidence}
+          emissiveIntensity={0.55}
           scale={1}
         />
       )}
