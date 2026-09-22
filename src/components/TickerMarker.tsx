@@ -28,7 +28,6 @@ export function TickerMarker({
   futureProjection = null,
 }: Props) {
   const [localHover, setLocalHover] = useState(false)
-  if (!state.visible) return null
 
   const venueHint = venueColor(state.chain_venue)
   const radius = radiusFromVolume(state.volume_h24, volumeMax)
@@ -54,6 +53,9 @@ export function TickerMarker({
 
   // Present state color (temporal position = 0)
   const presentColor = useMemo(() => getTemporalColor(0, venueHint), [venueHint])
+
+  // Early return AFTER all hooks to avoid Rules of Hooks violation
+  if (!state.visible) return null
 
   return (
     <>
