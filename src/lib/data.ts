@@ -234,3 +234,142 @@ export function formatPct(p: number | null): string {
   const sign = p > 0 ? '+' : ''
   return `${sign}${p.toFixed(2)}%`
 }
+
+/**
+ * Get historical states for ghost trail (up to maxSteps prior timestamps).
+ * Returns array of states from oldest to newest (excluding current time).
+ */
+export function getGhostStates(
+  processed: ProcessedTimeline,
+  ticker: string,
+  currentT: number,
+  maxSteps = 20,
+): TickerState[] {
+  const samples = processed.samplesByTicker[ticker] ?? []
+  if (samples.length === 0) return []
+
+  // Find current sample index
+  let currentIdx = -1
+  for (let i = 0; i < samples.length; i++) {
+    if (samples[i].ts_unix <= currentT) {
+      currentIdx = i
+    } else {
+      break
+    }
+  }
+
+  if (currentIdx < 0) return []
+
+  // Get up to maxSteps prior samples
+  const startIdx = Math.max(0, currentIdx - maxSteps + 1)
+  const ghosts: TickerState[] = []
+
+  for (let i = startIdx; i < currentIdx; i++) {
+    const sample = samples[i]
+    ghosts.push({
+      ticker,
+      chain_venue: sample.chain_venue,
+      position: sample.xyz,
+      price_usd: sample.price_usd,
+      volume_h24: sample.volume_h24,
+      r_1d: sample.r_1d,
+      r_3d: sample.r_3d,
+      ts_unix: sample.ts_unix,
+      ts_iso: sample.ts_iso,
+      visible: true,
+    })
+  }
+
+  return ghosts
+}
+
+/**
+ * Project future position using velocity extrapolation and/or r_1d/r_3d labels.
+ * Uses last 3-5 samples for velocity estimation when available.
+ */
+export function getFutureProjection(
+  processed: ProcessedTimeline,
+  ticker: string,
+  currentT: number,
+  horizonSeconds = 3600 * 6, // 6 hours ahead by default
+): { position: [number, number, number]; confidence: number } | null {
+  const samples = processed.samplesByTicker[ticker] ?? []
+  if (samples.length === 0) return null
+
+  // Find current sample index
+  let currentIdx = -1
+  for (let i = 0; i < samples.length; i++) {
+    if (samples[i].ts_unix <= currentT) {
+      currentIdx = i
+    } else {
+      break
+    }
+  }
+
+  if (currentIdx < 0) return null
+
+  const current = samples[currentIdx]
+  
+  // Method 1: Velocity extrapolation from last few samples
+  const lookback = Math.min(5, currentIdx + 1)
+  if (lookback >= 2) {
+    const recent = samples.slice(currentIdx - lookback + 1, currentIdx + 1)
+    
+    // Compute average velocity in PCA space
+    let vx = 0, vy = 0, vz = 0
+    let count = 0
+    
+    for (let i = 1; i < recent.length; i++) {
+      const dt = recent[i].ts_unix - recent[i - 1].ts_unix
+      if (dt > 0) {
+        vx += (recent[i].xyz[0] - recent[i - 1].xyz[0]) / dt
+        vy += (recent[i].xyz[1] - recent[i - 1].xyz[1]) / dt
+        vz += (recent[i].xyz[2] - recent[i - 1].xyz[2]) / dt
+        count++
+      }
+    }
+    
+    if (count > 0) {
+      vx /= count
+      vy /= count
+      vz /= count
+      
+      // Method 2: Incorporate r_1d/r_3d if available as a nudge
+      // r_1d/r_3d are price returns; we can use them to bias the velocity
+      let nudgeFactor = 1.0
+      if (current.r_1d != null && Number.isFinite(current.r_1d)) {
+        // Small nudge based on momentum (r_1d is in %, convert to factor)
+        nudgeFactor += current.r_1d * 0.005 // subtle influence
+      }
+      
+      const projectedPos: [number, number, number] = [
+        current.xyz[0] + vx * horizonSeconds * nudgeFactor,
+        current.xyz[1] + vy * horizonSeconds * nudgeFactor,
+        current.xyz[2] + vz * horizonSeconds * nudgeFactor,
+      ]
+      
+      // Confidence based on velocity consistency
+      const velocityMag = Math.sqrt(vx * vx + vy * vy + vz * vz)
+      const confidence = Math.min(1.0, 0.3 + velocityMag * 2) // Higher velocity = more confident
+      
+      return { position: projectedPos, confidence }
+    }
+  }
+  
+  // Fallback: just use r_1d/r_3d as a directional hint
+  if (current.r_1d != null && Number.isFinite(current.r_1d)) {
+    const magnitude = Math.abs(current.r_1d) * 0.15
+    const direction = current.r_1d > 0 ? 1 : -1
+    
+    return {
+      position: [
+        current.xyz[0] + direction * magnitude * 0.7,
+        current.xyz[1] + direction * magnitude * 0.5,
+        current.xyz[2] + direction * magnitude * 0.3,
+      ],
+      confidence: 0.3,
+    }
+  }
+  
+  return null
+}

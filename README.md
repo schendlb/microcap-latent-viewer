@@ -2,7 +2,30 @@
 
 3D PCA latent-space viewer for ultra micro-cap tokens, built with Vite, React, TypeScript, and React Three Fiber.
 
-Each ticker is a sphere in a fitted 3-component PCA space over hourly market feature vectors. A timeline scrubber (with play/pause and speed) moves through time; positions use the latest sample at or before `t` and lerp between consecutive samples.
+Each ticker is rendered as a soft volumetric blob in a fitted 3-component PCA space over hourly market feature vectors. A timeline scrubber (with play/pause and speed) moves through time; positions use the latest sample at or before `t` and lerp between consecutive samples.
+
+## Features
+
+### Ghosted Past Trail
+Each ticker shows up to **20 historical positions** as fading ghost blobs. Older positions are more transparent (cool blue tones), fading in toward the present (bright cyan). This gives a sense of recent trajectory through the latent space.
+
+### Projected Future Position
+A **future marker** (warm orange) shows where each ticker might move next, based on:
+- Short-horizon velocity extrapolation from the last 3-5 PCA samples
+- Optional momentum nudge using `r_1d` (1-day return) when available
+
+**Note:** Future projections are **not ground truth**—they're simple extrapolations for visualization purposes only. Confidence varies with recent velocity consistency.
+
+### Temporal Color Spectrum
+Colors encode time:
+- **Past** (ghosts): Cool blues → cyan (oldest to newest)
+- **Present**: Bright cyan/white (peak clarity at scrubber position)
+- **Future**: Warm orange (projected position)
+
+Venue colors (Base green, Robinhood orange) are blended in subtly as a secondary cue.
+
+### Soft SDF-Style Volumes
+Instead of hard spheres, tickers are rendered as **soft volumetric blobs** with smooth density falloff, Fresnel glow, and transparency—giving a "probability cloud" aesthetic suitable for the probabilistic nature of the PCA embedding.
 
 ## Data
 

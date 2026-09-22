@@ -154,8 +154,27 @@ export default function App() {
           hoveredTicker={hoveredTicker}
           onHover={onHover}
           onSelect={onSelect}
+          processed={processed}
+          currentT={currentT}
         />
         <InfoPanel state={focusState} />
+        <div className="viz-legend panel">
+          <div className="viz-legend-title">Visualization Guide</div>
+          <div className="viz-legend-items">
+            <div className="viz-legend-item">
+              <span className="viz-color-swatch past" />
+              <span>Ghost trail: up to 20 prior steps (fading from past)</span>
+            </div>
+            <div className="viz-legend-item">
+              <span className="viz-color-swatch present" />
+              <span>Present: current scrubber position</span>
+            </div>
+            <div className="viz-legend-item">
+              <span className="viz-color-swatch future" />
+              <span>Future: velocity extrapolation (not ground truth)</span>
+            </div>
+          </div>
+        </div>
       </main>
 
       <TimelineControls

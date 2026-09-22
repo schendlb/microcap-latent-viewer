@@ -264,3 +264,64 @@
   justify-content: space-between;
   color: #5d6b7e;
 }
+
+.viz-legend {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  background: rgba(14, 18, 26, 0.92);
+  border: 1px solid #1e2838;
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+  padding: 0.7rem 0.9rem;
+  z-index: 2;
+  pointer-events: none;
+  max-width: 320px;
+}
+
+.viz-legend-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #8a98ab;
+  margin-bottom: 0.5rem;
+}
+
+.viz-legend-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.7rem;
+  color: #c5d0de;
+  line-height: 1.4;
+}
+
+.viz-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.viz-color-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.viz-color-swatch.past {
+  background: linear-gradient(135deg, #1a2540, #4a9eff);
+  opacity: 0.7;
+}
+
+.viz-color-swatch.present {
+  background: #4af4ff;
+  box-shadow: 0 0 8px rgba(74, 244, 255, 0.6);
+}
+
+.viz-color-swatch.future {
+  background: #ffaa33;
+  opacity: 0.7;
+  box-shadow: 0 0 6px rgba(255, 170, 51, 0.4);
+}

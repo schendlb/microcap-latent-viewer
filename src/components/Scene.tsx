@@ -1,7 +1,9 @@
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Grid, Stars } from '@react-three/drei'
+import { useMemo } from 'react'
 import { TickerMarker } from './TickerMarker'
-import type { TickerState } from '../lib/types'
+import type { TickerState, ProcessedTimeline } from '../lib/types'
+import { getGhostStates, getFutureProjection } from '../lib/data'
 
 interface Props {
   states: TickerState[]
@@ -10,6 +12,8 @@ interface Props {
   hoveredTicker: string | null
   onHover: (ticker: string | null) => void
   onSelect: (ticker: string | null) => void
+  processed: ProcessedTimeline
+  currentT: number
 }
 
 function AxesHint() {
@@ -39,7 +43,28 @@ export function Scene({
   hoveredTicker,
   onHover,
   onSelect,
+  processed,
+  currentT,
 }: Props) {
+  // Compute ghost states and future projections for all tickers
+  const tickerEnhancements = useMemo(() => {
+    const enhancements = new Map<string, {
+      ghostStates: TickerState[]
+      futureProjection: { position: [number, number, number]; confidence: number } | null
+    }>()
+    
+    for (const state of states) {
+      if (!state.visible) continue
+      
+      const ghostStates = getGhostStates(processed, state.ticker, currentT, 20)
+      const futureProjection = getFutureProjection(processed, state.ticker, currentT)
+      
+      enhancements.set(state.ticker, { ghostStates, futureProjection })
+    }
+    
+    return enhancements
+  }, [states, processed, currentT])
+
   return (
     <Canvas
       camera={{ position: [4.5, 3.2, 5.5], fov: 50, near: 0.1, far: 200 }}
@@ -63,17 +88,22 @@ export function Scene({
         infiniteGrid
         position={[0, -3.2, 0]}
       />
-      {states.map((s) => (
-        <TickerMarker
-          key={s.ticker}
-          state={s}
-          volumeMax={volumeMax}
-          selected={selectedTicker === s.ticker}
-          hovered={hoveredTicker === s.ticker}
-          onHover={onHover}
-          onSelect={(t) => onSelect(t)}
-        />
-      ))}
+      {states.map((s) => {
+        const enhancements = tickerEnhancements.get(s.ticker)
+        return (
+          <TickerMarker
+            key={s.ticker}
+            state={s}
+            volumeMax={volumeMax}
+            selected={selectedTicker === s.ticker}
+            hovered={hoveredTicker === s.ticker}
+            onHover={onHover}
+            onSelect={(t) => onSelect(t)}
+            ghostStates={enhancements?.ghostStates}
+            futureProjection={enhancements?.futureProjection}
+          />
+        )
+      })}
       <OrbitControls
         makeDefault
         enableDamping
